@@ -13,7 +13,7 @@ class Firefly {
 
         // flashing
         this.theta = random(TWO_PI);
-        this.frequency = random(-5.0, 5.0);
+        this.frequency = random(-5, 10.0);
 
         // display
         this.flashLength = Math.PI / 8;
@@ -45,7 +45,7 @@ class Firefly {
 
     display() {
         noStroke();
-        if (this.theta % TWO_PI < this.flashLength) {
+        if (abs(this.theta % TWO_PI) < this.flashLength || abs(this.theta % TWO_PI) > TWO_PI - this.flashLength) {
             fill(255, 255, 0);
         } else {
             fill(100);

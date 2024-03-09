@@ -1,20 +1,31 @@
 let fireflies = [];
 let numFireflies = 10;
 
+let resetButton;
+let speedUpButton;
+let isSpeedUpButtonPressed = false; // This will act like button.pressed()
 
 function setup() {
   createCanvas(400, 400);
   for (let i = 0; i < numFireflies; i++) {
     fireflies[i] = new Firefly();
-    // fireflies[i].theta = 0.0;
   }
 
-
-  // fireflies[0].position = createVector(width / 2 - 40, height / 4);
-  // fireflies[1].position = createVector(width / 2 + 40, height / 4);
-
   frameRate(30);
-  // createLoop({ duration: 360.0 / 30.0, gif: true })
+
+  resetButton = createButton('Reset');
+  resetButton.position(20, height - 50); // Position it at the top-left corner, adjust as needed
+  resetButton.size(150, 50); // Make it big enough for easy touch on mobile
+  resetButton.mousePressed(resetSketch);
+
+  speedUpButton = createButton('Fast forward');
+  speedUpButton.position(width - 20 - 150, height - 50);
+  speedUpButton.size(150, 50);
+  speedUpButton.mousePressed(() => isSpeedUpButtonPressed = true);
+  speedUpButton.mouseReleased(() => isSpeedUpButtonPressed = false);
+  // for touch devices
+  speedUpButton.touchStarted(() => isSpeedUpButtonPressed = true);
+  speedUpButton.touchEnded(() => isSpeedUpButtonPressed = false);
 }
 
 function draw() {
@@ -29,7 +40,7 @@ function draw() {
     }
   }
 
-  if (keyIsPressed) {
+  if (isSpeedUpButtonPressed) {
     for (let i = 0; i < substeps * 20; i++) {
       for (let firefly of fireflies) {
         firefly.update(dt_per_frame / substeps);
@@ -43,7 +54,6 @@ function draw() {
   }
 
   // analysis
-
   drawPhases();
   // drawBuckets();
 }
@@ -63,7 +73,7 @@ function drawPhases() {
   line(-100, 0, 100, 0);
 
   for (let firefly of fireflies) {
-    let r = 100 / firefly.frequency;
+    let r = width / 2 / (abs(firefly.frequency) + 1);
     let t = firefly.theta - PI / 2;
 
     let x = cos(t) * r;
@@ -123,5 +133,11 @@ function drawBuckets() {
     let y = height - rectHeight;
 
     rect(x, y, rectWidth, rectHeight);
+  }
+}
+
+function resetSketch() {
+  for (let i = 0; i < numFireflies; i++) {
+    fireflies[i] = new Firefly();
   }
 }
