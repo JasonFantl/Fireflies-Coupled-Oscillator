@@ -8,9 +8,9 @@ class Firefly {
         }
 
         // flashing
-        this.flashInterval = random(10, 80); // how long between flashes, in frames
-        // this.flashInterval = 60; // how long between flashes, in frames
-        this.flashCounter = random(0, this.flashInterval); // increments by 1 every frame
+        this.interval = random(10, 80); // how long between flashes, in frames
+        // this.interval = 60; // how long between flashes, in frames
+        this.phase = random(0, this.interval); // increments by 1 every frame
         this.flashRadius = 5000; // in pixels
 
         // display
@@ -18,9 +18,9 @@ class Firefly {
     }
 
     update() {
-        this.flashCounter += 1;
-        if (this.flashCounter >= this.flashInterval) {
-            this.flashCounter = 0;
+        this.phase += 1;
+        if (this.phase >= this.interval) {
+            this.phase = 0;
             this.sendSignal();
         }
 
@@ -29,7 +29,7 @@ class Firefly {
 
     display() {
         noStroke();
-        if (this.flashCounter < this.flashLength) {
+        if (this.phase < this.flashLength) {
             fill(255, 255, 0);
         } else {
             fill(100);
@@ -55,65 +55,65 @@ class Firefly {
     receiveSignal() {
         // // angle (constant)
         // let counterImpact = 4;
-        // if (this.flashCounter < this.flashInterval / 2) {
+        // if (this.phase < this.interval / 2) {
         //     // flash later
-        //     this.flashCounter -= counterImpact;
-        // } else if (this.flashCounter > this.flashInterval / 2) {
+        //     this.phase -= counterImpact;
+        // } else if (this.phase > this.interval / 2) {
         //     // flash earlier
-        //     this.flashCounter += counterImpact;
+        //     this.phase += counterImpact;
         // }
 
         // angle (proportional)
         // let counterImpact = 0.1;
-        // if (this.flashCounter < this.flashInterval / 2) {
+        // if (this.phase < this.interval / 2) {
         //     // flash later
-        //     this.flashCounter += (0 - this.flashCounter) * counterImpact * 2;
-        // } else if (this.flashCounter > this.flashInterval / 2) {
+        //     this.phase += (0 - this.phase) * counterImpact * 2;
+        // } else if (this.phase > this.interval / 2) {
         //     // flash earlier
-        //     this.flashCounter +=
-        //         (this.flashInterval - this.flashCounter) * counterImpact * 2;
+        //     this.phase +=
+        //         (this.interval - this.phase) * counterImpact * 2;
         // }
 
         // angle (sin)
         let counterImpact = 0.02;
-        this.flashCounter -= counterImpact * this.flashInterval * sin(this.flashCounter / this.flashInterval * 2 * Math.PI);
+        this.phase -= counterImpact * this.interval * sin(this.phase / this.interval * 2 * Math.PI);
 
         // angle (proportional) (de-sync)
-        // this.flashCounter += counterImpact * (this.flashInterval / 2 - this.flashCounter) * 2;
+        // this.phase += counterImpact * (this.interval / 2 - this.phase) * 2;
 
         // angle (sin) (de-sync)
-        // this.flashCounter += counterImpact * this.flashInterval * sin(this.flashCounter / this.flashInterval * 2 * Math.PI);
+        // this.phase += counterImpact * this.interval * sin(this.phase / this.interval * 2 * Math.PI);
 
         // TODO: Expand/Shrink interval around current time, so for the next flash we are actualy sooner or later. If we have a timer that counts up and we set the interval to be longer, it will take longer for the next flash. But if we have a countdown timer, setting the interval to be long wont take effect until the next cycle. Want the middle of these.
 
         // // interval (constant)
-        // let IntervalImpact = 0.01;
-        // if (this.flashCounter < this.flashInterval/2) {
+        // let intervalCouplingConstant = 0.01;
+        // if (this.phase < this.interval/2) {
         // // when we need to be flash later, we lengthen the interval
-        //   this.flashInterval += IntervalImpact;
-        // } else if (this.flashCounter > this.flashInterval/2) {
+        //   this.interval += intervalCouplingConstant;
+        // } else if (this.phase > this.interval/2) {
         // // when we need to flash earlier, we shorten the interval
-        //   this.flashInterval -= IntervalImpact;
+        //   this.interval -= intervalCouplingConstant;
         // }
 
         // // interval (proportional)
-        // let IntervalImpact = 0.2;
-        // if (this.flashCounter < this.flashInterval / 2) {
+        // let intervalCouplingConstant = 0.2;
+        // if (this.phase < this.interval / 2) {
         //     // when we need to be flash later, we lengthen the interval proportional to how far away the counter is from the zero, normalized to 1 by dividing by 2
-        //     this.flashInterval +=
-        //         IntervalImpact * ((this.flashCounter / this.flashInterval) * 2);
-        // } else if (this.flashCounter > this.flashInterval / 2) {
+        //     this.interval +=
+        //         intervalCouplingConstant * ((this.phase / this.interval) * 2);
+        // } else if (this.phase > this.interval / 2) {
         //     // when we need to flash earlier, we shorten the interval
-        //     this.flashInterval -=
-        //         IntervalImpact * (2 - (this.flashCounter / this.flashInterval) * 2);
+        //     this.interval -=
+        //         intervalCouplingConstant * (2 - (this.phase / this.interval) * 2);
         // }
 
         // interval (sin)
-        let IntervalImpact = 0.02;
-        this.flashInterval += IntervalImpact * this.flashInterval * sin(this.flashCounter / this.flashInterval * 2 * Math.PI);
+        let intervalCouplingConstant = 0.02;
+        this.interval += intervalCouplingConstant * this.interval * sin(this.phase / this.interval * 2 * Math.PI);
 
-        // this.flashInterval *= 1 - angularVelocityImpact * sin(this.flashAngle*TWO_PI);
-        // this.flashInterval -= 0.1*sin(this.flashAngle*TWO_PI);
+        // this.interval *= 1 - angularVelocityImpact * sin(this.flashAngle*TWO_PI);
+        // this.interval -= 0.1*sin(this.flashAngle*TWO_PI);
     }
 
     // TODO: find the differential equation version of this, see if it yields any insights.

@@ -52,8 +52,8 @@ function drawPhases() {
   line(-100, 0, 100, 0);
 
   for (let firefly of fireflies) {
-    let r = firefly.flashInterval;
-    let t = TWO_PI * firefly.flashCounter / firefly.flashInterval - PI / 2;
+    let r = firefly.interval;
+    let t = TWO_PI * firefly.phase / firefly.interval - PI / 2;
     let x = cos(t) * r;
     let y = sin(t) * r;
     xAverage += x;
@@ -83,7 +83,7 @@ function drawBuckets() {
   let intervalBuckets = {};
   let bucketSize = 1;
   for (let firefly of fireflies) {
-    let key = int(firefly.flashInterval / bucketSize);
+    let key = int(firefly.interval / bucketSize);
     intervalBuckets[key] = intervalBuckets[key] ? intervalBuckets[key] + 1 : 1;
   }
 
