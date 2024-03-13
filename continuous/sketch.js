@@ -13,24 +13,29 @@ function setup() {
 
   frameRate(30);
 
-  resetButton = createButton('Reset');
-  resetButton.position(20, height - 50); // Position it at the top-left corner, adjust as needed
-  resetButton.size(150, 50); // Make it big enough for easy touch on mobile
-  resetButton.mousePressed(resetSketch);
+  // record GIF
+  createLoop({ duration: 360.0 / 30.0, gif: true })
 
-  speedUpButton = createButton('Fast forward');
-  speedUpButton.position(width - 20 - 150, height - 50);
-  speedUpButton.size(150, 50);
-  speedUpButton.mousePressed(() => isSpeedUpButtonPressed = true);
-  speedUpButton.mouseReleased(() => isSpeedUpButtonPressed = false);
-  // for touch devices
-  speedUpButton.touchStarted(() => isSpeedUpButtonPressed = true);
-  speedUpButton.touchEnded(() => isSpeedUpButtonPressed = false);
+  // buttons for interactive
+  // resetButton = createButton('Reset');
+  // resetButton.position(20, height - 50); // Position it at the top-left corner, adjust as needed
+  // resetButton.size(150, 50); // Make it big enough for easy touch on mobile
+  // resetButton.mousePressed(resetSketch);
+
+  // speedUpButton = createButton('Fast forward');
+  // speedUpButton.position(width - 20 - 150, height - 50);
+  // speedUpButton.size(150, 50);
+  // speedUpButton.mousePressed(() => isSpeedUpButtonPressed = true);
+  // speedUpButton.mouseReleased(() => isSpeedUpButtonPressed = false);
+  // // for touch devices
+  // speedUpButton.touchStarted(() => isSpeedUpButtonPressed = true);
+  // speedUpButton.touchEnded(() => isSpeedUpButtonPressed = false);
 }
 
 function draw() {
   background(255);
 
+  isSpeedUpButtonPressed = frameCount > 30 && frameCount < 120;
 
   let substeps = 10;
   let dt_per_frame = 0.01;
@@ -55,7 +60,6 @@ function draw() {
 
   // analysis
   drawPhases();
-  // drawBuckets();
 }
 
 function drawPhases() {
@@ -73,7 +77,7 @@ function drawPhases() {
   line(-100, 0, 100, 0);
 
   for (let firefly of fireflies) {
-    let r = width / 2 / (abs(firefly.frequency) + 1);
+    let r = width / 1.5 / (abs(firefly.frequency) + 1);
     let t = firefly.theta - PI / 2;
 
     let x = cos(t) * r;
@@ -97,47 +101,4 @@ function drawPhases() {
   noStroke();
   // circle(xAverage, yAverage, 10);
   pop();
-}
-
-function drawBuckets() {
-  // intervals
-
-  let intervalBuckets = {};
-  let bucketSize = 1;
-  for (let firefly of fireflies) {
-    let key = int(firefly.flashInterval / bucketSize);
-    intervalBuckets[key] = intervalBuckets[key] ? intervalBuckets[key] + 1 : 1;
-  }
-
-  let rectWidth = 2;
-
-  // axis lines
-  stroke(100);
-  fill(10);
-  for (let interval = 0; interval <= 200; interval += 40) {
-    let x = interval * rectWidth;
-    let y = height - 30;
-
-    strokeWeight(1);
-    line(x, y, x, y + 10);
-    strokeWeight(0);
-    text(interval, x, y);
-  }
-
-  // buckets
-  fill(100);
-  noStroke();
-  for (let interval in intervalBuckets) {
-    let rectHeight = intervalBuckets[interval] * 10;
-    let x = interval * rectWidth;
-    let y = height - rectHeight;
-
-    rect(x, y, rectWidth, rectHeight);
-  }
-}
-
-function resetSketch() {
-  for (let i = 0; i < numFireflies; i++) {
-    fireflies[i] = new Firefly();
-  }
 }

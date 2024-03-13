@@ -1,6 +1,6 @@
 
-var K = 2.0;
-var L = 2.0;
+var K = 3.0;
+var L = 1.0;
 
 class Firefly {
     constructor() {
@@ -13,7 +13,8 @@ class Firefly {
 
         // flashing
         this.theta = random(TWO_PI);
-        this.frequency = random(-5, 10.0);
+        this.frequency = random(4, 6);
+        // this.frequency = 4;
 
         // display
         this.flashLength = Math.PI / 8;
@@ -21,23 +22,44 @@ class Firefly {
 
     update(dt) {
 
-        // flashing
+        // // -----------------
+        // // sync both
+        // // -----------------
+        // let avg_deltas = 0;
+        // for (let firefly of fireflies) {
+        //     avg_deltas += sin(firefly.theta - this.theta);
+        // }
+        // avg_deltas /= numFireflies;
+        // let d_theta = this.frequency + K * avg_deltas;
+        // let d_frequency = L * avg_deltas;
+
+        // -----------------
+        // de-sync phase, sync frequency
+        // -----------------
+        // frequency, using proportional equation
         let avg_deltas = 0;
         for (let firefly of fireflies) {
-            avg_deltas += sin(firefly.theta - this.theta);
+            if (firefly == this) {
+                continue;
+            }
+            avg_deltas += ((((firefly.theta - this.theta) % TWO_PI) + TWO_PI) % TWO_PI - PI) / PI;
         }
-
         avg_deltas /= numFireflies;
-
         let d_theta = this.frequency + K * avg_deltas;
         let d_frequency = L * avg_deltas;
 
+
+
+        // update
         this.theta += d_theta * dt;
         this.frequency += d_frequency * dt;
 
-        // if (this.theta >= TWO_PI) {
-        //     this.theta -= TWO_PI;
-        // }
+        if (this.theta >= TWO_PI) {
+            this.theta -= TWO_PI;
+        }
+        if (this.theta <= -TWO_PI) {
+            this.theta += TWO_PI;
+        }
 
         // position
         this.position.add(p5.Vector.random2D());

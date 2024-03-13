@@ -12,13 +12,15 @@ function setup() {
   // fireflies[1].position = createVector(width / 2 + 40, height / 4);
 
   frameRate(30);
-  createLoop({ duration: 420.0 / 30.0, gif: true })
+  createLoop({ duration: 360.0 / 30.0, gif: true })
 }
 
 function draw() {
   background(255);
 
-  if (keyIsPressed) {
+  speedup = keyIsPressed || (frameCount > 60 && frameCount < 180);
+
+  if (speedup) {
     for (let i = 0; i < 20; i++) {
       for (let firefly of fireflies) {
         firefly.update();
@@ -32,9 +34,7 @@ function draw() {
   }
 
   // analysis
-
   drawPhases();
-  // drawBuckets();
 }
 
 function drawPhases() {
@@ -75,41 +75,4 @@ function drawPhases() {
   noStroke();
   // circle(xAverage, yAverage, 10);
   pop();
-}
-
-function drawBuckets() {
-  // intervals
-
-  let intervalBuckets = {};
-  let bucketSize = 1;
-  for (let firefly of fireflies) {
-    let key = int(firefly.interval / bucketSize);
-    intervalBuckets[key] = intervalBuckets[key] ? intervalBuckets[key] + 1 : 1;
-  }
-
-  let rectWidth = 2;
-
-  // axis lines
-  stroke(100);
-  fill(10);
-  for (let interval = 0; interval <= 200; interval += 40) {
-    let x = interval * rectWidth;
-    let y = height - 30;
-
-    strokeWeight(1);
-    line(x, y, x, y + 10);
-    strokeWeight(0);
-    text(interval, x, y);
-  }
-
-  // buckets
-  fill(100);
-  noStroke();
-  for (let interval in intervalBuckets) {
-    let rectHeight = intervalBuckets[interval] * 10;
-    let x = interval * rectWidth;
-    let y = height - rectHeight;
-
-    rect(x, y, rectWidth, rectHeight);
-  }
 }
